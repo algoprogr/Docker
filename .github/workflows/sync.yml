@@ -1,4 +1,4 @@
-name: Sync to Hugging Face hub
+name: Sync to Hugging Face
 on:
   push:
     branches: [main]
@@ -11,12 +11,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          lfs: true
-      - name: Push to hub
-        uses: huggingface/push-to-hub-action@v2.0
-        with:
-          hf_token: ${{ secrets.sync }}
-          hf_repo: daredevils00/test
-          hf_folder_path: ./
-          commit_message: Syncing latest code
-
+      - name: Push to HF
+        env:
+          HF_SYNC_TOKEN: ${{ secrets.sync }}
+        run: |
+          git remote add hf https://daredevils00:$HF_SYNC_TOKEN@huggingface.co/spaces/daredevils00/test
+          git push --force hf main
