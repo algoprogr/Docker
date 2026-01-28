@@ -1,9 +1,19 @@
 const express = require('express');
+const path = require('path');
 const app = express();
-const port = 7860; // Port required by Hugging Face
+const port = 7860;
 
-app.get('/', (req, res) => {
-  res.send({ status: "success", message: "Container is LIVE!", time: new Date() });
+// Tell Express to serve files from a folder named "public"
+app.use(express.static('public'));
+
+// The API route you already have
+app.get('/api', (req, res) => {
+  res.json({ status: "success", message: "Container is LIVE!", time: new Date() });
 });
 
-app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+// Serve the UI (index.html) when someone visits the main URL
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(port, () => console.log(`UI running on http://localhost:${port}`));
