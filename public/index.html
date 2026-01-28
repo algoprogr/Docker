@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Container UI</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        #response { margin-top: 20px; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 My Test App</h1>
+        <p>This UI is running inside your Docker container!</p>
+        <button onclick="testAPI()">Test API Endpoint</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const res = await fetch('/api');
+            const data = await res.json();
+            document.getElementById('response').innerText = "Server says: " + data.message;
+        }
+    </script>
+</body>
+</html>
