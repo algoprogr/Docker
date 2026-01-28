@@ -1,0 +1,22 @@
+name: Sync to Hugging Face hub
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: Push to hub
+        uses: huggingface/push-to-hub-action@v2.0
+        with:
+          hf_token: ${{ secrets.sync }}
+          hf_repo: daredevils00/test
+          hf_folder_path: ./
+          commit_message: Syncing latest code
+
