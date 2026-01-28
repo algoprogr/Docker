@@ -3,27 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Container UI</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        #response { margin-top: 20px; color: #666; font-style: italic; }
-    </style>
+    <title>Tailwind API UI</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="card">
-        <h1>🚀 My Test App</h1>
-        <p>This UI is running inside your Docker container!</p>
-        <button onclick="testAPI()">Test API Endpoint</button>
-        <div id="response"></div>
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+
+    <div class="max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="p-3 bg-blue-600 rounded-lg animate-pulse">🚀</div>
+            <h1 class="text-2xl font-bold tracking-tight">Cloud Container</h1>
+        </div>
+
+        <p class="text-slate-400 mb-8">
+            Your Node.js API is running behind this UI. Click below to test the connection.
+        </p>
+
+        <button onclick="testAPI()" 
+            class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-blue-900/20">
+            Check API Status
+        </button>
+
+        <div id="response-box" class="hidden mt-6 p-4 bg-slate-950 rounded-lg border border-slate-800 font-mono text-sm">
+            <span class="text-green-400">root@container:~$</span> 
+            <span id="response-text" class="text-slate-300 ml-2"></span>
+        </div>
     </div>
 
     <script>
         async function testAPI() {
-            const res = await fetch('/api');
-            const data = await res.json();
-            document.getElementById('response').innerText = "Server says: " + data.message;
+            const box = document.getElementById('response-box');
+            const text = document.getElementById('response-text');
+            
+            try {
+                const res = await fetch('/api');
+                const data = await res.json();
+                box.classList.remove('hidden');
+                text.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                text.innerText = "Error connecting to API";
+            }
         }
     </script>
 </body>
