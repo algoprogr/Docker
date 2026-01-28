@@ -1,19 +1,32 @@
 const express = require('express');
+const translate = require('translate');
 const path = require('path');
 const app = express();
-const port = 7860;
 
-// Tell Express to serve files from a folder named "public"
+app.use(express.json());
 app.use(express.static('public'));
 
-// The API route you already have
-app.get('/api', (req, res) => {
-  res.json({ status: "success", message: "Container is LIVE!", time: new Date() });
+// Configure the engine to use Google (free tier)
+translate.engine = 'google'; 
+
+// POST Endpoint for external apps
+// Example: POST to /api/translate with { "text": "Hello", "lang": "ar" }
+app.post('/api/translate', async (req, res) => {
+    try {
+        const { text, lang } = req.body;
+        if (!text) return res.status(400).json({ error: "No text provided" });
+
+        // Translates to target language (default: Arabic)
+        const translated = await translate(text, lang || 'ar'); 
+        res.json({ original: text, translated: translated, target_lang: lang || 'ar' });
+    } catch (err) {
+        res.status(500).json({ error: "Translation failed", details: err.message });
+    }
 });
 
-// Serve the UI (index.html) when someone visits the main URL
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(port, () => console.log(`UI running on http://localhost:${port}`));
+const PORT = process.env.PORT || 7860;
+app.listen(PORT, () => console.log(`Translator server active on port ${PORT}`));
