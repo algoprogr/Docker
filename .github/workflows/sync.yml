@@ -1,4 +1,4 @@
-name: Sync to Hugging Face
+name: Deploy tools to Hugging Face
 on:
   push:
     branches: [main]
@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
       - name: Push to HF
         env:
-          HF_SYNC_TOKEN: ${{ secrets.sync }}
+          HF_SYNC_TOKEN: ${{ secrets.tools }}
         run: |
-          git remote add hf https://daredevils00:$HF_SYNC_TOKEN@huggingface.co/spaces/daredevils00/test
+          git remote add hf https://daredevils00:$HF_SYNC_TOKEN@huggingface.co/spaces/daredevils00/tools
           git push --force hf main
