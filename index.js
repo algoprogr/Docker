@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const API_KEY = process.env.LEMON_API_KEY;
 
-// ESM-compatible __dirname
+// ESM-safe __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,17 +25,15 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(morgan("dev"));
 
-/* ----------- SERVE FRONTEND ----------- */
+/* ---------- SERVE HTML ---------- */
 app.use(express.static(__dirname));
 
 app.get("/", (_req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
-/* ------------------------------------- */
+/* -------------------------------- */
 
-/**
- * ACTIVATE LICENSE
- */
+/* ---------- ACTIVATE LICENSE ---------- */
 app.post("/activate", async (req, res) => {
     const { license_key, instance_name } = req.body;
 
@@ -70,10 +68,9 @@ app.post("/activate", async (req, res) => {
             .json({ error: "Activation failed" });
     }
 });
+/* -------------------------------------- */
 
-/**
- * VALIDATE LICENSE
- */
+/* ---------- VALIDATE LICENSE ---------- */
 app.post("/validate", async (req, res) => {
     const { license_key, instance_id } = req.body;
 
@@ -92,3 +89,40 @@ app.post("/validate", async (req, res) => {
             payload,
             {
                 headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        const valid = r.data.valid === true;
+
+        res.json({
+            valid,
+            expires_at: r.data.license_key?.expires_at || null,
+            error: valid ? null : r.data.error || "License invalid",
+            meta: r.data.meta || null,
+        });
+    } catch (e) {
+        console.error("Validation error:", e.response?.data || e.message);
+        res.status(e.response?.status || 500).json({
+            valid: false,
+            error: "Validation failed",
+        });
+    }
+});
+/* -------------------------------------- */
+
+/* ---------- HEALTH CHECK ---------- */
+app.get("/health", (_req, res) => {
+    res.json({
+        status: "ok",
+        time: new Date().toISOString(),
+    });
+});
+/* --------------------------------- */
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ License server running on port ${PORT}`);
+});
