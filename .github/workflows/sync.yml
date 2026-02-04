@@ -1,4 +1,4 @@
-name: Deploy tools to Hugging Face
+name: Deploy backend to Hugging Face
 on:
   push:
     branches: [main]
@@ -15,5 +15,5 @@ jobs:
         env:
           HF_SYNC_TOKEN: ${{ secrets.tools }}
         run: |
-          git remote add hf https://daredevils00:$HF_SYNC_TOKEN@huggingface.co/spaces/daredevils00/tools
+          git remote add hf https://daredevils00:$HF_SYNC_TOKEN@huggingface.co/spaces/daredevils00/backend
           git push --force hf main
