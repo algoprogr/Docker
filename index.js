@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT || 7860);
 const API_KEY = process.env.LEMON_API_KEY;
 
 // ESM-safe __dirname
